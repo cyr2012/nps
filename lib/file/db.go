@@ -152,7 +152,7 @@ func (s *DbUtils) IsHostExist(h *Host) bool {
 	var exist bool
 	s.JsonDb.Hosts.Range(func(key, value interface{}) bool {
 		v := value.(*Host)
-		if v.Id != h.Id && v.Host == h.Host && h.Location == v.Location && (v.Scheme == "all" || v.Scheme == h.Scheme) {
+		if v.Id != h.Id && v.Host == h.Host && h.Location == v.Location && (v.Scheme == h.Scheme || v.Scheme == "all" || v.Scheme == "") {
 			exist = true
 			return false
 		}
@@ -332,7 +332,7 @@ func (s *DbUtils) GetInfoByHost(host string, r *http.Request) (h *Host, err erro
 		if re, err = regexp.Compile(tmp); err != nil {
 			return true
 		}
-		if len(re.FindAllString(host, -1)) > 0 && (v.Scheme == "all" || v.Scheme == r.URL.Scheme) {
+		if len(re.FindAllString(host, -1)) > 0 && (v.Scheme == r.URL.Scheme || v.Scheme == "all" || v.Scheme == "") {
 			//URL routing
 			hosts = append(hosts, v)
 		}
